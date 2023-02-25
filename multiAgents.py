@@ -75,18 +75,27 @@ class ReflexAgent(Agent):
         newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
 
         "*** YOUR CODE HERE ***"
+
         res = 0
+        # rewarded when food eaten, else decrement distance from nearest food
         if len(newFood.asList()) < len(currentGameState.getFood().asList()):
             res += 100
+        else:
+            dists = []
+            for food in newFood.asList():
+                dists.append(util.manhattanDistance(food,newPos))
+            
+            if len(dists) > 0:
+                res -= min(dists)
+
+        # decrement when meet ghost
         if newGhostStates[0].getPosition() == newPos:
             res -= 1000
-        dists = []
-        for food in newFood.asList():
-            dists.append(util.manhattanDistance(food,newPos))
-        if len(dists) > 0:
-            res -= min(dists)
+
+        # reward when eat scare pellet    
         if newScaredTimes[0] == 1:
             res += 1000
+
         return res
 
 def scoreEvaluationFunction(currentGameState: GameState):
