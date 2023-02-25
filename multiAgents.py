@@ -78,6 +78,7 @@ class ReflexAgent(Agent):
         res = 0
         if len(newFood.asList()) < len(currentGameState.getFood().asList()):
             res += 100
+            return res
         if newGhostStates[0].getPosition() == newPos:
             res -= 1000
         dists = []
