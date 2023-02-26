@@ -157,31 +157,42 @@ class MinimaxAgent(MultiAgentSearchAgent):
         Returns whether or not the game state is a losing state
         """
         "*** YOUR CODE HERE ***"
-    #     # num_ghosts = gameState.getNumAgents() - 1
 
-    #     # while depth > 0:
-    #     #     # pacman maximizer layer
-    #     #     pacman_actions = gameState.getLegalActions(0)
+        def value(state: GameState, ind, action):
+            if state.isWin() or state.isLose():
+                return (self.evaluationFunction(state), action)
+            if ind == 0:
+                return max_value(state,ind)
+            else:
+                return min_value(state,ind)
+                
+        def max_value(state,ind):
+                v = float('-inf')
+                bes = ''
+                actions = state.getLegalActions(ind)
+                for action in actions:
+                    successor = state.generateSuccessor(ind,action)
+                    val = value(successor, ind+1, action)
+                    if v < val:
+                        bes = action
+                        v = val
+                return (v,bes)
 
-    #     # value to action dictionary
-    #     val_act_dict = {}
-    #     value = self.evaluationFunction(gameState)
+        def min_value(state,ind):
+            v = float('inf')
+            bes = ''
+            actions = state.getLegalActions(ind)
+            for action in actions:
+                successor = state.generateSuccessor(ind,action)
+                val = value(successor,ind+1, action)
+                if v > val:
+                    bes = action
+                    v = val
+            return (v,bes)
         
-    #     if gameState.isWin() or gameState.isLose():
-    #         return val_act_dict[value]
-        
-    #     for agentIndex in gameState.getNumAgents(): 
-    #         if agentIndex
-
-
-    # def maximizer(self):
-    #     return
-
-
-    # def minimizer(self):
-    #     return
-
-    
+        for a in gameState.getLegalActions(0):
+            action = value(gameState, 0, a)[1]
+        return action
         
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
