@@ -291,7 +291,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
             else:
                 return min_value(state,index, a, b, path, currDepth)
             
-        result = value(gameState, 0, float("inf"), float("-inf"), [], 0)
+        result = value(gameState, 0, float("-inf"), float("inf"), [], 0)
         return result[1][0]
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
