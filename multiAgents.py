@@ -157,42 +157,46 @@ class MinimaxAgent(MultiAgentSearchAgent):
         Returns whether or not the game state is a losing state
         """
         "*** YOUR CODE HERE ***"
-        currLayer = 0
-        def max_value(state,ind):
+      
+        def max_value(state,ind,path,currDepth):
             v = float('-inf')
-            bes = ''
+            bes = []
             actions = state.getLegalActions(ind)
             for action in actions:
                 successor = state.generateSuccessor(ind,action)
                 temp = path[:]
                 temp.append(action)
-                val = value(successor,ind+1,temp)[0]
-                if v < val:
+                val = value(successor,ind+1,temp,currDepth)
+                if val[0] > v:
                     bes = val[1]
-                    v = val
+                    v = val[0]
             return (v,bes)
-        def min_value(state,ind,path):
+        def min_value(state,ind,path,currDepth):
             v = float('inf')
-            bes = ''
+            bes = []
             actions = state.getLegalActions(ind)
             for action in actions:
                 successor = state.generateSuccessor(ind,action)
                 temp = path[:]
                 temp.append(action)
-                val = value(successor,ind+1,temp)[0]
-                if v > val:
-                    bes = val[1]
-                    v = val
-            return (v,bes)
-        def value(state: GameState,ind,path):
-            if state.isWin() or state.isLose():
-                return (self.evaluationFunction(state),path)
-            if ind == 0:
-                return max_value(state,ind,path)
-            else:
-                return min_value(state,ind,path)
-        
+                if ind == state.getNumAgents()-1:
+                    currDepth += 1
 
+                val = value(successor,(ind+1) % (state.getNumAgents()),temp,currDepth)
+                if val[0] < v:
+                    bes = val[1]
+                    v = val[0]
+            return (v,bes)
+        def value(state: GameState,ind,path,currDepth):
+            if state.isWin() or state.isLose() or currDepth == self.depth:
+                return ( self.evaluationFunction(state), path)
+            if ind == 0:
+                return max_value(state,ind,path,currDepth)
+            else:
+                return min_value(state,ind,path,currDepth)
+        
+        res = value(gameState,0,[],0)
+        return res[1][0]
 
         
 
