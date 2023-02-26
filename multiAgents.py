@@ -157,7 +157,30 @@ class MinimaxAgent(MultiAgentSearchAgent):
         Returns whether or not the game state is a losing state
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        # num_ghosts = gameState.getNumAgents() - 1
+
+        # while depth > 0:
+        #     # pacman maximizer layer
+        #     pacman_actions = gameState.getLegalActions(0)
+
+        # value to action dictionary
+        val_act_dict = {}
+        value = self.evaluationFunction(gameState)
+        
+        if gameState.isWin() or gameState.isLose():
+            return val_act_dict[value]
+        if 
+
+
+    def maximizer(self):
+        return
+
+
+    def minimizer(self):
+        return
+
+    
+        
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
