@@ -157,7 +157,6 @@ class MinimaxAgent(MultiAgentSearchAgent):
         Returns whether or not the game state is a losing state
         """
         "*** YOUR CODE HERE ***"
-
         def max_value(state,ind,path,currDepth):
             # initializing
             v = float('-inf')
