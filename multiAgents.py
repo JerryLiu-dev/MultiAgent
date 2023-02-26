@@ -158,43 +158,65 @@ class MinimaxAgent(MultiAgentSearchAgent):
         """
         "*** YOUR CODE HERE ***"
 
-        def value(state: GameState, ind, action):
-            if state.isWin() or state.isLose():
-                return (self.evaluationFunction(state), action)
-            if ind == 0:
-                return max_value(state,ind)
-            else:
-                return min_value(state,ind)
-                
-        def max_value(state,ind):
-                v = float('-inf')
-                bes = ''
-                actions = state.getLegalActions(ind)
-                for action in actions:
-                    successor = state.generateSuccessor(ind,action)
-                    val = value(successor, ind+1, action)
-                    if v < val:
-                        bes = action
-                        v = val
-                return (v,bes)
-
-        def min_value(state,ind):
-
-            v = float('inf')
-            bes = ''
+        def max_value(state,ind,path,currDepth):
+            # initializing
+            v = float('-inf')
+            bes = []
             actions = state.getLegalActions(ind)
+
+            # go through possible actions
             for action in actions:
                 successor = state.generateSuccessor(ind,action)
-                val = value(successor,ind+1, action)
-                if v > val:
-                    bes = action
-                    v = val
+
+                # building path
+                temp = path[:]
+                temp.append(action)
+
+                val = value(successor,ind+1,temp,currDepth)
+
+                # updating best action/value for pacman
+                if val[0] > v:
+                    bes = val[1]
+                    v = val[0]
             return (v,bes)
         
-        action = value(gameState, 0, "")[1]
-        return action
-        
+        def min_value(state,ind,path,currDepth):
+            # initializing
+            v = float('inf')
+            bes = []
+            actions = state.getLegalActions(ind)
 
+            # increment depth when all ghost layers generated
+            if ind == state.getNumAgents()-1:
+                currDepth += 1
+
+            # iterate through possible actions
+            for action in actions:
+                successor = state.generateSuccessor(ind,action)
+
+                # building path
+                temp = path[:]
+                temp.append(action)
+
+                val = value(successor,(ind+1) % (state.getNumAgents()),temp,currDepth)
+
+                # updating best ghost action/value
+                if val[0] < v:
+                    bes = val[1]
+                    v = val[0]
+            return (v,bes)
+        
+        def value(state: GameState,ind,path,currDepth):
+            if state.isWin() or state.isLose() or currDepth == self.depth:
+                return ( self.evaluationFunction(state), path)
+            if ind == 0:
+                return max_value(state,ind,path,currDepth)
+            else:
+                return min_value(state,ind,path,currDepth)
+        
+        res = value(gameState,0,[],0)
+        return res[1][0]
+        
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
     Your minimax agent with alpha-beta pruning (question 3)
