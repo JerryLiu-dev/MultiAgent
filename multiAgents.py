@@ -179,6 +179,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
                 return (v,bes)
 
         def min_value(state,ind):
+
             v = float('inf')
             bes = ''
             actions = state.getLegalActions(ind)
@@ -190,8 +191,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
                     v = val
             return (v,bes)
         
-        for a in gameState.getLegalActions(0):
-            action = value(gameState, 0, a)[1]
+        action = value(gameState, 0, "")[1]
         return action
         
 
