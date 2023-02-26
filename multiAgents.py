@@ -307,7 +307,64 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         legal moves.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        def max_value(state,ind,path,currDepth):
+            # initializing
+            v = float('-inf')
+            bes = []
+            actions = state.getLegalActions(ind)
+
+            # go through possible actions
+            for action in actions:
+                successor = state.generateSuccessor(ind,action)
+
+                # building path
+                temp = path[:]
+                temp.append(action)
+
+                val = value(successor,ind+1,temp,currDepth)
+
+                # updating best action/value for pacman
+                if val[0] > v:
+                    bes = val[1]
+                    v = val[0]
+            return (v,bes)
+        
+        def min_value(state,ind,path,currDepth):
+            # initializing
+            v = 0
+            bes = []
+            actions = state.getLegalActions(ind)
+
+            # increment depth when all ghost layers generated
+            if ind == state.getNumAgents()-1:
+                currDepth += 1
+            
+            # iterate through possible actions
+            for action in actions:
+                successor = state.generateSuccessor(ind,action)
+
+                # building path
+                temp = path[:]
+                temp.append(action)
+
+                val = value(successor,(ind+1) % (state.getNumAgents()),temp,currDepth)
+
+                # updating best ghost action/value
+                
+                bes = val[1]
+                v += val[0]
+            return ((v/len(actions)),bes)
+        
+        def value(state: GameState,ind,path,currDepth):
+            if state.isWin() or state.isLose() or currDepth == self.depth:
+                return ( self.evaluationFunction(state), path)
+            if ind == 0:
+                return max_value(state,ind,path,currDepth)
+            else:
+                return min_value(state,ind,path,currDepth)
+        
+        res = value(gameState,0,[],0)
+        return res[1][0]
 
 def betterEvaluationFunction(currentGameState: GameState):
     """
