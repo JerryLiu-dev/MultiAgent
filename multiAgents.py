@@ -226,7 +226,69 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         Returns the minimax action using self.depth and self.evaluationFunction
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        def max_value(state, index, a, b, path, currDepth):
+            # initializing
+            v = float('-inf')
+            actions = state.getLegalActions(index)
+
+            # go through possible actions
+            for action in actions:
+                successor = state.generateSuccessor(index,action)
+
+                # building path
+                temp = path[:]
+                temp.append(action)
+
+                val = value(successor,index+1, a, b, path, currDepth)
+
+                # updating best pacman action/value
+                if val[0] > v:
+                    bes = val[1]
+                    v = val[0]
+
+                # pruning
+                if v > b: 
+                    return (v, bes)
+                
+                a = max(a, v)
+            return (v, bes)
+
+        def min_value(state, index, a, b, path, currDepth):
+            # initializing
+            v = float('inf')
+            actions = state.getLegalActions(index)
+
+            # go through possible actions
+            for action in actions:
+                successor = state.generateSuccessor(index, action)
+
+                # building path
+                temp = path[:]
+                temp.append(action)
+
+                val = value(successor, index+1, a, b, path, currDepth)
+
+                # updating best pacman action/value
+                if val[0] < v:
+                    bes = val[1]
+                    v = val[0]
+
+                if v < a:
+                    return (v, bes)
+            
+                b = min(b, v)
+            return (v, bes)
+        
+        def value(state:GameState, index, a, b, path, currDepth):
+            if state.isWin() or state.isLose():
+                return (self.evaluationFunction(state), path)
+            if index == 0:
+                return max_value(state,index, a, b, path, currDepth)
+            else:
+                return min_value(state,index, a, b, path, currDepth)
+            
+        result = value(gameState, 0, float("inf"), float("-inf"), [], 0)
+        return result
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
