@@ -239,7 +239,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
                 temp = path[:]
                 temp.append(action)
 
-                val = value(successor,index+1, a, b, path, currDepth)
+                val = value(successor,index+1, a, b, temp, currDepth)
 
                 # updating best pacman action/value
                 if val[0] > v:
@@ -258,6 +258,10 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
             v = float('inf')
             actions = state.getLegalActions(index)
 
+            # increment depth when all ghost layers generated
+            if index == state.getNumAgents()-1:
+                currDepth += 1
+
             # go through possible actions
             for action in actions:
                 successor = state.generateSuccessor(index, action)
@@ -266,7 +270,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
                 temp = path[:]
                 temp.append(action)
 
-                val = value(successor, index+1, a, b, path, currDepth)
+                val = value(successor,(index+1) % (state.getNumAgents()), a, b,temp,currDepth)
 
                 # updating best pacman action/value
                 if val[0] < v:
@@ -280,7 +284,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
             return (v, bes)
         
         def value(state:GameState, index, a, b, path, currDepth):
-            if state.isWin() or state.isLose():
+            if state.isWin() or state.isLose() or currDepth == self.depth:
                 return (self.evaluationFunction(state), path)
             if index == 0:
                 return max_value(state,index, a, b, path, currDepth)
@@ -288,7 +292,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
                 return min_value(state,index, a, b, path, currDepth)
             
         result = value(gameState, 0, float("inf"), float("-inf"), [], 0)
-        return result
+        return result[1][0]
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
